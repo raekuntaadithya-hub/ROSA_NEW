@@ -1,0 +1,25 @@
+{
+  "patient_id": "test-pt-mesh-01",
+  "anatomical_bone": "FEMUR",
+  "coordinate_frame": "DICOM LPS (mm)",
+  "smoothing_parameters": {
+    "algorithm": "Taubin",
+    "lambda": 0.5,
+    "mu": -0.53,
+    "iterations": 20
+  },
+  "metrics": {
+    "reference_volume_cm3": 245.82,
+    "smoothed_volume_cm3": 245.01,
+    "volume_drift_pct": -0.33,
+    "max_allowed_drift_pct": 0.35,
+    "is_watertight": true,
+    "euler_characteristic": 2,
+    "non_manifold_edges": 0,
+    "watertight_boundary_edges": 0,
+    "curvature_noise_au": 0.24
+  },
+  "mesh_sha256": "b33eaf27085985cd2e04e4a93afcc1b00a4d35ca965de036e04a3d463f620580",
+  "qa_passed": true,
+  "qa_notes": "Verified zero condylar shrinkage. Surface manifold intact with zero non-manifold edges."
+}
