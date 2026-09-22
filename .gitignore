@@ -105,9 +105,27 @@ temp/
 *.sqlite
 *.sqlite3
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Large Model Checkpoints (>100MB for GitHub push)
+*.pth
+*.pt
+*.bin
+*.onnx
+
 # Webdev artifacts (checkpoint zips, migrations, etc.)
 .webdev/
 
 # Manus version file (auto-generated, not part of source)
 client/public/__manus__/version.json
 .project-config.json
+

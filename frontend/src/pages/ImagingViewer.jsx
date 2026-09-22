@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import AppLayout from '@/layouts/AppLayout';
 import { mockPatients } from '@/data/mockPatients';
 import { mockImagingStudies } from '@/data/mockData';
+import { Link } from 'wouter';
 import {
   ZoomIn,
   ZoomOut,
@@ -9,6 +10,7 @@ import {
   Eye,
   EyeOff,
   Sun,
+  Brain,
 } from 'lucide-react';
 
 // Procedural mock CT image renderer
@@ -20,7 +22,8 @@ function drawMockCT(
   plane,
   showMask,
   windowLevel,
-  windowWidth
+  windowWidth,
+  showGradCAM = false
 ) {
   // Dark background
   ctx.fillStyle = '#000000';
@@ -109,6 +112,27 @@ function drawMockCT(
     ctx.globalAlpha = 1;
   }
 
+  // ResNet-50 Grad-CAM Heatmap overlay
+  if (showGradCAM) {
+    ctx.save();
+    ctx.globalAlpha = 0.45;
+    const camGrad = ctx.createRadialGradient(cx - 5 * scale, cy + 10 * scale, 10 * scale, cx - 5 * scale, cy + 10 * scale, 90 * scale);
+    camGrad.addColorStop(0, 'rgba(239, 68, 68, 0.9)'); // Red center
+    camGrad.addColorStop(0.3, 'rgba(245, 158, 11, 0.8)'); // Yellow-orange
+    camGrad.addColorStop(0.6, 'rgba(16, 185, 129, 0.5)'); // Green
+    camGrad.addColorStop(0.85, 'rgba(59, 130, 246, 0.3)'); // Blue
+    camGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = camGrad;
+    ctx.beginPath();
+    ctx.ellipse(cx - 5 * scale, cy + 10 * scale, 80 * scale, 65 * scale, -0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.fillStyle = '#f59e0b';
+    ctx.font = `bold ${10 * scale}px monospace`;
+    ctx.fillText('Grad-CAM [layer4.2.conv3]: JSN & Osteophytes', 10, 36 * scale);
+  }
+
   // DICOM-style annotations
   ctx.fillStyle = '#4ade80';
   ctx.font = `${11 * scale}px monospace`;
@@ -122,6 +146,7 @@ export default function ImagingViewer() {
   const [plane, setPlane] = useState('axial');
   const [sliceIndex, setSliceIndex] = useState(142);
   const [showMask, setShowMask] = useState(false);
+  const [showGradCAM, setShowGradCAM] = useState(false);
   const [windowLevel, setWindowLevel] = useState(40);
   const [windowWidth, setWindowWidth] = useState(400);
   const [zoom, setZoom] = useState(1);
@@ -135,8 +160,8 @@ export default function ImagingViewer() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    drawMockCT(ctx, canvas.width, canvas.height, sliceIndex, plane, showMask, windowLevel, windowWidth);
-  }, [sliceIndex, plane, showMask, windowLevel, windowWidth]);
+    drawMockCT(ctx, canvas.width, canvas.height, sliceIndex, plane, showMask, windowLevel, windowWidth, showGradCAM);
+  }, [sliceIndex, plane, showMask, windowLevel, windowWidth, showGradCAM]);
 
   useEffect(() => {
     render();
@@ -268,16 +293,26 @@ export default function ImagingViewer() {
             </div>
 
             {/* Overlays */}
-            <div className="border-t border-slate-100 pt-4">
-              <label className="text-xs font-medium text-slate-500 mb-2 block">AI Overlays</label>
+            <div className="border-t border-slate-100 pt-4 space-y-2">
+              <label className="text-xs font-medium text-slate-500 mb-1 block">AI Neural Overlays</label>
               <button
                 onClick={() => setShowMask(!showMask)}
-                className={`flex items-center gap-2 w-full rounded-lg border px-3 py-2 text-sm transition-colors ${
-                  showMask ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                className={`flex items-center gap-2 w-full rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+                  showMask ? 'border-indigo-300 bg-indigo-50 text-indigo-700 font-semibold' : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                 }`}
               >
-                {showMask ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                Segmentation Mask
+                {showMask ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                Attention U-Net Mask (0.9944 Dice)
+              </button>
+
+              <button
+                onClick={() => setShowGradCAM(!showGradCAM)}
+                className={`flex items-center gap-2 w-full rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+                  showGradCAM ? 'border-amber-300 bg-amber-50 text-amber-800 font-semibold' : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                {showGradCAM ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                ResNet-50 Grad-CAM Heatmap
               </button>
             </div>
 
@@ -299,10 +334,39 @@ export default function ImagingViewer() {
               </div>
             )}
 
+            {/* ResNet-50 Diagnostic Triage Summary */}
+            <div className="border-t border-slate-100 pt-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
+                  <Brain className="h-3.5 w-3.5 text-blue-600" /> ResNet-50 Triage
+                </span>
+                <Link href="/models">
+                  <span className="text-[10px] text-blue-600 hover:underline cursor-pointer">Explore Model →</span>
+                </Link>
+              </div>
+              <div className="p-2.5 rounded-lg bg-blue-50/70 border border-blue-100 text-xs space-y-1">
+                <div className="flex justify-between font-semibold text-slate-800">
+                  <span>Severity Grade:</span>
+                  <span className="text-blue-700">KL-3 (Moderate OA)</span>
+                </div>
+                <div className="flex justify-between text-slate-600 text-[11px]">
+                  <span>Confidence:</span>
+                  <span className="font-mono">91.2% (AUC 0.948)</span>
+                </div>
+                <div className="flex justify-between text-slate-600 text-[11px]">
+                  <span>Thermal Synovitis:</span>
+                  <span className="text-red-600 font-medium">ΔT = 1.8°C (Active)</span>
+                </div>
+                <div className="pt-1 text-[11px] font-bold text-emerald-700">
+                  ✓ Surgical Candidate (ROSA iKA)
+                </div>
+              </div>
+            </div>
+
             {/* Reset */}
             <div className="border-t border-slate-100 pt-4">
               <button
-                onClick={() => { setZoom(1); setWindowLevel(40); setWindowWidth(400); setSliceIndex(142); setShowMask(false); }}
+                onClick={() => { setZoom(1); setWindowLevel(40); setWindowWidth(400); setSliceIndex(142); setShowMask(false); setShowGradCAM(false); }}
                 className="flex items-center gap-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors"
               >
                 <RotateCcw className="h-4 w-4" /> Reset View

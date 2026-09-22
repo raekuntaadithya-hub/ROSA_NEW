@@ -13,6 +13,7 @@ import SurgicalPlanning from "@/pages/SurgicalPlanning";
 import Reports from "@/pages/Reports";
 import Analytics from "@/pages/Analytics";
 import Settings from "@/pages/Settings";
+import AIModels from "@/pages/AIModels";
 import NotFound from "@/pages/NotFound";
 
 export default function AppRoutes() {
@@ -22,6 +23,7 @@ export default function AppRoutes() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/overview" component={Home} />
       <Route path="/login" component={Login} />
+      <Route path="/models" component={AIModels} />
       <Route path="/patients" component={PatientRegistry} />
       <Route path="/patients/:id" component={PatientDetails} />
       <Route path="/imaging" component={ImagingViewer} />

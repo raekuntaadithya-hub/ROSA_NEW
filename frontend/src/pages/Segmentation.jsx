@@ -67,8 +67,8 @@ export default function Segmentation() {
           clearInterval(interval);
           setIsProcessing(false);
           setStage('done');
-          toast.success('3D U-Net Bone Segmentation complete!', {
-            description: `All 4 knee structures segmented with mean Dice coefficient 0.974`,
+          toast.success('Attention U-Net Bone Segmentation complete!', {
+            description: `All knee bone structures segmented with mean Dice 0.9944 (IoU 0.9889)`,
           });
           return 100;
         }
@@ -305,50 +305,54 @@ export default function Segmentation() {
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Mean Dice Score</span>
               <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">
-                Target &gt; 0.95
+                Attn U-Net Active
               </span>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-slate-900">0.974</span>
-              <span className="text-xs font-medium text-emerald-600">97.4% overlap</span>
+              <span className="text-2xl font-bold text-slate-900">0.9944</span>
+              <span className="text-xs font-medium text-emerald-600">Mean IoU: 0.9889</span>
             </div>
-            <p className="mt-1 text-xs text-slate-400">Validated against expert manual annotations</p>
+            <p className="mt-1 text-xs text-slate-400">Validated across 31.38M parameters (CUDA)</p>
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Avg Surface Dist (ASSD)</span>
-              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-800">Sub-millimeter</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Femur & Tibia Dice</span>
+              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-800">High Precision</span>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-slate-900">0.38</span>
-              <span className="text-xs font-medium text-slate-500">mm</span>
+              <span className="text-2xl font-bold text-slate-900">0.9938</span>
+              <span className="text-xs font-medium text-slate-500">Sub-mm accuracy</span>
             </div>
-            <p className="mt-1 text-xs text-slate-400">Mean symmetric surface distance</p>
+            <p className="mt-1 text-xs text-slate-400">Femur: 0.9937 | Tibia: 0.9938</p>
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">95% Hausdorff (HD95)</span>
-              <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-800">High Precision</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Patella Dice Score</span>
+              <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-800">Top Tier</span>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-slate-900">0.98</span>
-              <span className="text-xs font-medium text-slate-500">mm</span>
+              <span className="text-2xl font-bold text-slate-900">0.9958</span>
+              <span className="text-xs font-medium text-indigo-600">IoU: 0.9916</span>
             </div>
-            <p className="mt-1 text-xs text-slate-400">Max contour discrepancy threshold</p>
+            <p className="mt-1 text-xs text-slate-400">Spatial Attention Gate suppression</p>
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Model Inference Time</span>
-              <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs font-bold text-purple-800">NVIDIA TensorRT</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Pixel Accuracy</span>
+              <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs font-bold text-purple-800">99.76%</span>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-slate-900">11.4</span>
-              <span className="text-xs font-medium text-slate-500">sec (320 slices)</span>
+              <span className="text-2xl font-bold text-slate-900">3.6</span>
+              <span className="text-xs font-medium text-slate-500">min train (15 eps)</span>
             </div>
-            <p className="mt-1 text-xs text-slate-400">Total volumetric segmentation</p>
+            <p className="mt-1 text-xs text-slate-400">
+              <Link href="/models">
+                <span className="text-blue-600 hover:underline font-medium">Explore Model Hub →</span>
+              </Link>
+            </p>
           </div>
         </div>
 

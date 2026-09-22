@@ -4,6 +4,7 @@ import { Bell, Search, Wifi, User } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { toast } from 'sonner';
+import VivaGuideModal from '@/components/demo/VivaGuideModal';
 
 export default function Header() {
   const { user } = useAuthStore();
@@ -24,7 +25,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white/95 backdrop-blur-sm px-6">
-      {/* Left: Current Patient Context */}
+      {/* Left: Current Patient Context & Viva Guide */}
       <div className="flex items-center gap-4">
         {selectedPatient && (
           <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-1.5">
@@ -37,6 +38,7 @@ export default function Header() {
             </span>
           </div>
         )}
+        <VivaGuideModal />
       </div>
 
       {/* Right: Search, Notifications, Status, Profile */}

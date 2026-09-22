@@ -14,11 +14,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Activity,
+  Cpu,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/models', label: 'AI Models Hub', icon: Cpu },
   { path: '/patients', label: 'Patients', icon: Users },
   { path: '/imaging', label: 'Imaging', icon: ScanLine },
   { path: '/segmentation', label: 'Segmentation', icon: Brain },

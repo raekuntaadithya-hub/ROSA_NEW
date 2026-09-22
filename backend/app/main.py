@@ -83,6 +83,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.staticfiles import StaticFiles
+import os
+from pathlib import Path
+
+# Mount models assets if available
+models_dir = Path(__file__).resolve().parent.parent.parent / "models"
+if models_dir.exists():
+    resnet_out = models_dir / "resnet" / "outputs"
+    unet_out = models_dir / "attention-unet" / "outputs"
+    if resnet_out.exists():
+        app.mount("/models/resnet", StaticFiles(directory=str(resnet_out)), name="resnet_models")
+    if unet_out.exists():
+        app.mount("/models/attention-unet", StaticFiles(directory=str(unet_out)), name="unet_models")
+
 # Include API v1 Router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 

@@ -7,7 +7,8 @@ from backend.app.api.endpoints import (
     ika_planner,
     audit,
     proms,
-    analytics
+    analytics,
+    models
 )
 
 api_router = APIRouter()
@@ -20,3 +21,5 @@ api_router.include_router(ika_planner.router, prefix="/ika", tags=["5. 8-Step iK
 api_router.include_router(audit.router, prefix="/audit", tags=["6. Audit Ledger & Hard Gate (Tier 5)"])
 api_router.include_router(proms.router, prefix="/proms", tags=["7. PROMs (OKS & FJS-12)"])
 api_router.include_router(analytics.router, prefix="/analytics", tags=["8. Clinical Analytics"])
+api_router.include_router(models.router, prefix="/models", tags=["9. AI Models & Architecture Hub"])
+
