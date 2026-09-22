@@ -116,8 +116,7 @@ venv/
 ENV/
 .venv
 
-# Large Model Checkpoints (>100MB for GitHub push)
-*.pth
+# Large Model Checkpoints (handled via Git LFS)
 *.pt
 *.bin
 *.onnx
